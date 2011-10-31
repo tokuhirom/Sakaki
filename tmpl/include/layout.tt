@@ -25,8 +25,8 @@
                 <div class="container">
                 <h3><a href="#">Sakaki</a></h3>
                 <ul class="nav">
-                    <li class="active"><a href="#">Home</a></li>
-                    <li><a href="#">Link</a></li>
+                    <li class="active"><a href="/">Home</a></li>
+                    <li><a href="/create">Create</a></li>
                     <li><a href="#">Link</a></li>
                     <li><a href="#">Link</a></li>
                     <li class="dropdown">

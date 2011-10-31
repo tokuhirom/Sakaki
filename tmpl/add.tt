@@ -1,0 +1,13 @@
+[% WRAPPER 'include/layout.tt' %]
+
+<div class="row">
+    <div class="span16">
+		<form method="post" action="[% uri_for('/create') %]">
+			<input type="text" placeholder="Title" name="name" />
+			<textarea name="body" placeholder="Body here"></textarea>
+			<input type="submit" value="Create" class="btn primary" />
+		</form>
+    </div>
+</div>
+
+[% END %]

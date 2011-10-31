@@ -1,0 +1,10 @@
+[% WRAPPER 'include/layout.tt' %]
+
+<div class="row">
+    <div class="span16">
+		<h2>[% name %]</h2>
+		[% body %]
+    </div>
+</div>
+
+[% END %]
