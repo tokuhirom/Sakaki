@@ -35,6 +35,7 @@ sub create {
         print {$fh} $body;
         close $fh;
 
+        system('git', 'init');
         system('git', 'add', $filename);
         system('git', 'commit', '-m', 'initial import', $filename);
     }
