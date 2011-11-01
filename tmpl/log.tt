@@ -5,10 +5,10 @@
 		<div>
 			<a href="/e/[% name | uri %]/edit">Edit</a>
 			|
-			<a href="/e/[% name | uri %]/log">Log</a>
+			<a href="/e/[% name | uri %]">Show</a>
 		</div>
 		<h2>[% name %]</h2>
-		[% body %]
+		<pre>[% log %]</pre>
     </div>
 </div>
 

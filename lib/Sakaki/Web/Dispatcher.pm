@@ -26,6 +26,14 @@ get '/e/:name' => sub {
     my $body = Sakaki::API::File->lookup(c => $c, name => $name);
     return $c->render('show.tt', {body => $body, name => $name});
 };
+get '/e/:name/log' => sub {
+    my ($c, $args) = @_;
+    my $name = $args->{name} // die;
+       $name = uri_unescape $name;
+       $name = decode_utf8 $name;
+    my $log = Sakaki::API::File->log(c => $c, name => $name);
+    return $c->render('log.tt', {log => $log, name => $name});
+};
 get '/e/:name/edit' => sub {
     my ($c, $args) = @_;
     my $name = $args->{name} // die;

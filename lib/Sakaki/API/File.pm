@@ -38,7 +38,7 @@ sub create {
 
         system('git', 'init');
         system('git', 'add', $filename);
-        system('git', 'commit', '-m', 'initial import', $filename);
+        system('git', 'commit', '--author', 'Anonymous Coward <anonymous@example.com>', '-m', 'initial import', $filename);
     }
 
     $name;
@@ -77,9 +77,23 @@ sub edit {
         seek($fh, 0, SEEK_SET);
         print {$fh} $body;
         system('git', 'add', $entry->name_raw);
-        system('git', 'commit', '-m', 'modified', $entry->name_raw);
+        system('git', 'commit', '--author', 'Anonymous Coward <anonymous@example.com>', '-m', 'modified', $entry->name_raw);
         close $fh;
     }
+}
+
+sub log {
+    args my $class,
+         my $c,
+         my $name,
+         ;
+
+    my $entry = Sakaki::Entry->new(name => $name);
+    my $log = do {
+        my $g = pushd($c->root_dir);
+        `git log -50 --no-color @{[ $entry->name_raw ]}`;
+    };
+    return $log;
 }
 
 sub recent {
