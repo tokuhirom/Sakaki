@@ -11,6 +11,7 @@ use File::stat;
 use Encode qw(decode_utf8);
 use Sakaki::Entry;
 use File::pushd;
+use Fcntl qw(:flock SEEK_END SEEK_SET);
 
 sub create {
     args my $class,
@@ -55,6 +56,30 @@ sub lookup {
     close $fh;
 
     return $body;
+}
+
+sub edit {
+    args my $class,
+         my $c,
+         my $name,
+         my $body,
+         ;
+
+    my $entry = Sakaki::Entry->new(name => $name);
+    {
+        my $g = pushd($c->root_dir);
+        open my $fh, '+<:utf8', $entry->name_raw;
+        flock($fh, LOCK_EX);
+        my $src = do { local $/, <$fh> };
+        if ($src eq $body) {
+            return; # no changes
+        }
+        seek($fh, 0, SEEK_SET);
+        print {$fh} $body;
+        system('git', 'add', $entry->name_raw);
+        system('git', 'commit', '-m', 'modified', $entry->name_raw);
+        close $fh;
+    }
 }
 
 sub recent {

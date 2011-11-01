@@ -18,13 +18,33 @@ any '/' => sub {
     $c->render('index.tt', { entries => $entries, pager => $pager });
 };
 
-any '/e/:name' => sub {
+get '/e/:name' => sub {
     my ($c, $args) = @_;
     my $name = $args->{name} // die;
        $name = uri_unescape $name;
        $name = decode_utf8 $name;
     my $body = Sakaki::API::File->lookup(c => $c, name => $name);
     return $c->render('show.tt', {body => $body, name => $name});
+};
+get '/e/:name/edit' => sub {
+    my ($c, $args) = @_;
+    my $name = $args->{name} // die;
+       $name = uri_unescape $name;
+       $name = decode_utf8 $name;
+    my $body = Sakaki::API::File->lookup(c => $c, name => $name);
+    return $c->render('edit.tt', {body => $body, name => $name});
+};
+post '/e/:name/edit' => sub {
+    my ($c, $args) = @_;
+    my $name = $args->{name} // die;
+       $name = uri_unescape $name;
+       $name = decode_utf8 $name;
+    Sakaki::API::File->edit(
+        c    => $c,
+        name => $name,
+        body => scalar $c->req->param('body')
+    );
+    return $c->redirect("/e/" . uri_escape_utf8 $name);
 };
 
 get '/create' => sub {
