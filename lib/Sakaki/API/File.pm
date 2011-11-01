@@ -91,7 +91,7 @@ sub log {
     my $entry = Sakaki::Entry->new(name => $name);
     my $log = do {
         my $g = pushd($c->root_dir);
-        `git log -50 --no-color @{[ $entry->name_raw ]}`;
+        `git log --patience -p -50 --no-color @{[ $entry->name_raw ]}`;
     };
     return $log;
 }
