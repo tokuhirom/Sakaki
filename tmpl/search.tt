@@ -1,0 +1,25 @@
+[% WRAPPER 'include/layout.tt' %]
+
+<div class="row">
+    <div class="span16">
+    [% IF keyword %]
+        <h1>Search result for [% keyword %]</h1>
+    [% ELSE %]
+        <h1>Search page</h1>
+    [% END %]
+        <form method="get" action="[% uri_for('/search') %]">
+            <input type="text" name="keyword" />
+            <input type="submit" value="Search" class="btn" />
+        </form>
+		<ul>
+		[% FOR v IN entries %]
+			<li>
+				<a href="[% uri_for('/e/' _ uri(v.name)) %]">[% v.name %]</a>
+				[% v.mtime_piece.strftime('%Y-%m-%d(%a) %T') %]
+			</li>
+		[% END %]
+		</ul>
+    </div>
+</div>
+
+[% END %]

@@ -33,5 +33,16 @@ subtest 'recent' => sub {
     isa_ok($pager, 'Data::Page');
 };
 
+subtest 'search' => sub {
+    my ($rows, $pager) = $repository->search(
+        keyword => 'test',
+        entries_per_page => 50,
+        current_page     => 1,
+    );
+    is(ref($rows), q(ARRAY));
+    is(0+@$rows, 1);
+    isa_ok($pager, 'Data::Page');
+};
+
 done_testing;
 

@@ -116,5 +116,33 @@ sub get_recent {
     return ([$pager->splice(\@files)], $pager);
 }
 
+sub search {
+    args my $self,
+         my $entries_per_page => 'Int',
+         my $current_page => 'Int',
+         my $keyword => 'Str',
+         ;
+
+    my @files;
+    opendir my $dh, $self->root_dir;
+    while (defined(my $f = readdir($dh))) {
+        next if $f =~ /^\./;
+        next unless -f catfile($self->root_dir, $f);
+        my $name = decode_utf8( uri_unescape($f) );
+        my $entry = $self->lookup($name);
+        if ($entry->name =~ /\Q$keyword\E/ || $entry->body =~ /\Q$keyword\E/) {
+            push @files, $entry;
+        }
+    }
+    @files = reverse sort { $a->mtime <=> $b->mtime } @files;
+
+    my $pager = Data::Page->new();
+    $pager->total_entries(0+@files);
+    $pager->entries_per_page($entries_per_page);
+    $pager->current_page($current_page);
+
+    return ([$pager->splice(\@files)], $pager);
+}
+
 1;
 

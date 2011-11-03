@@ -28,7 +28,7 @@
                     <li><a href="/create">Create</a></li>
                 </ul>
                 <form class="pull-left" action="/search">
-                    <input type="text" placeholder="Search">
+                    <input type="text" placeholder="Search" name="keyword" >
                 </form>
                 </div>
             </div><!-- /topbar-inner -->

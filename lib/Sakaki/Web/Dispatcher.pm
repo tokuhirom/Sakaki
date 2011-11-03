@@ -17,6 +17,21 @@ any '/' => sub {
     );
     $c->render( 'index.tt', { entries => $entries, pager => $pager } );
 };
+get '/search' => sub {
+    my ($c) = @_;
+
+    if (defined(my $keyword = $c->req->param('keyword'))) {
+        my $current_page = 0 + ( $c->req->param('page') || 1 );
+        my ( $entries, $pager ) = $c->repository->search(
+            keyword => $keyword,
+            entries_per_page => 50,
+            current_page     => $current_page,
+        );
+        return $c->render('search.tt', { keyword => $keyword, entries => $entries, pager => $pager });
+    } else {
+        return $c->render('search.tt', { keyword => $keyword });
+    }
+};
 
 get '/e/:name' => sub {
     my ( $c, $args ) = @_;
