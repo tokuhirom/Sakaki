@@ -11,6 +11,7 @@ use Text::Xslate::Util qw(mark_raw);
 use Smart::Args;
 use File::pushd;
 use Sakaki::Formatter;
+use Sakaki::StripScripts;
 
 use Sakaki;
 use Sakaki::Repository;
