@@ -1,0 +1,19 @@
+[% IF pager %]
+    <div class="pagination">
+        <ul>
+            [% IF pager.previous_page %]
+                <li class="prev"><a href="[% uri_with({page => pager.previous_page}) %]" rel="previous">&larr; Back</a><li>
+            [% ELSE %]
+                <li class="prev disabled"><a href="#">&larr; Back</a><li>
+            [% END %]
+
+            <li class="active"><a href="#">[% pager.current_page %]</a></li>
+
+            [% IF pager.next_page %]
+                <li class="next"><a href="[% uri_with({page => pager.next_page}) %]" rel="next">Back &rarr;</a><li>
+            [% ELSE %]
+                <li class="next disabled"><a href="#">Back &rarr;</a><li>
+            [% END %]
+        </ul>
+    </div>
+[% END %]

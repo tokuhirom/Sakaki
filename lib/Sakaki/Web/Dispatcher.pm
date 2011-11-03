@@ -71,7 +71,6 @@ any '/create' => sub {
     my $body = $c->req->param('body');
     my $formatter = $c->req->param('formatter');
     if ( $c->req->method eq 'POST' && ( $name && $body && $formatter ) ) {
-        my $repository = repo();
         my $entry = Sakaki::Entry->new(
             name       => $name,
             body       => $body,
