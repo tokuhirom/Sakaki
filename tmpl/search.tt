@@ -19,6 +19,8 @@
 			</li>
 		[% END %]
 		</ul>
+
+        [% INCLUDE 'include/pager.tt' WITH pager=pager %]
     </div>
 </div>
 
