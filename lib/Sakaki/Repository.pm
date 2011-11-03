@@ -13,6 +13,8 @@ use URI::Escape qw(uri_escape_utf8 uri_unescape);
 use Encode qw(decode_utf8);
 use Data::Page;
 
+use Sakaki::Entry;
+
 use Mouse;
 
 has root_dir => (
