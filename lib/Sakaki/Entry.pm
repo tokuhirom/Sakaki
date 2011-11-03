@@ -4,12 +4,16 @@ use warnings;
 use utf8;
 use URI::Escape qw(uri_escape_utf8 uri_unescape);
 use File::stat;
-use Sakaki;
 use Encode qw(decode_utf8);
 use Time::Piece;
 use File::Spec::Functions qw(catfile);
 use Text::Xslate::Util qw(mark_raw);
+use Smart::Args;
+use File::pushd;
+use Sakaki::Formatter;
 
+use Sakaki;
+use Sakaki::Repository;
 use Sakaki::Util qw(slurp);
 
 use Mouse;
@@ -55,16 +59,15 @@ has formatter => (
     default => sub {
         my $self = shift;
         my $formatter = do{
-            my $formatfile = catfile( Amon2->context->root_dir,
+            my $formatfile = catfile( $self->repository->root_dir,
                 '.' . $self->name_raw . '.format' );
             if (-f $formatfile) {
                 my $name = slurp($formatfile);
                 $name =~ s/\r?\n$//;
                 $name;
-            } else {
-                'Sakaki::Formatter::Plain'
             }
         };
+        $formatter ||= 'Sakaki::Formatter::Plain';
         unless (Sakaki::Formatter->is_formatter($formatter)) {
             die "Bad formatter name: $formatter";
         }
@@ -72,19 +75,27 @@ has formatter => (
     },
 );
 
+has repository => (
+    is       => 'ro',
+    isa      => 'Sakaki::Repository',
+    required => 1,
+);
+for my $meth (qw(create update get_log)) {
+    no strict 'refs';
+    *{__PACKAGE__ . '::' . $meth} = sub {
+        my ($self) = @_;
+        $self->repository->$meth($self);
+    };
+}
+
 sub name_raw {
     my $self = shift;
     uri_escape_utf8 $self->name;
 }
 
-sub new_from_raw {
-	my ($self, $name_raw) = @_;
-	Sakaki::Entry->new(name => decode_utf8(uri_unescape($name_raw)));
-}
-
 sub fullpath {
 	my $self = shift;
-	catfile(Amon2->context->root_dir, $self->name_raw);
+	catfile($self->repository->root_dir, $self->name_raw);
 }
 
 sub filename { shift->fullpath }

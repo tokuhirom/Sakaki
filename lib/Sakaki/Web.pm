@@ -16,7 +16,7 @@ sub dispatch {
         if (UNIVERSAL::isa($_, 'Sakaki::Exception::ValidationError')) {
             $c->show_error("Validation error: " . $_);
         } else {
-            $_;
+            die $_;
         }
     };
 }

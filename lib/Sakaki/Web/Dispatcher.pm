@@ -11,8 +11,7 @@ use FormValidator::Lite;
 any '/' => sub {
     my ($c) = @_;
     my $current_page = 0 + ( $c->req->param('page') || 1 );
-    my ( $entries, $pager ) = Sakaki::API::File->recent(
-        c                => $c,
+    my ( $entries, $pager ) = $c->repository->get_recent(
         entries_per_page => 50,
         current_page     => $current_page,
     );
@@ -24,7 +23,7 @@ get '/e/:name' => sub {
     my $name = $args->{name} // die;
     $name = uri_unescape $name;
     $name = decode_utf8 $name;
-    my $entry = Sakaki::Entry->new( name => $name );
+    my $entry = $c->repository->lookup($name);
     return $c->render( 'show.tt', { entry => $entry, name => $name } );
 };
 get '/e/:name/log' => sub {
@@ -32,29 +31,23 @@ get '/e/:name/log' => sub {
     my $name = $args->{name} // die;
     $name = uri_unescape $name;
     $name = decode_utf8 $name;
-    my $log = Sakaki::API::File->log( c => $c, name => $name );
-    return $c->render( 'log.tt', { log => $log, name => $name } );
+    my $entry = $c->repository->lookup($name);
+    my $log = $entry->get_log();
+    return $c->render( 'log.tt', { log => $log, name => $entry->name } );
 };
-get '/e/:name/edit' => sub {
+any '/e/:name/edit' => sub {
     my ( $c, $args ) = @_;
     my $name = $args->{name} // die;
        $name = uri_unescape $name;
        $name = decode_utf8 $name;
-    my $entry = Sakaki::Entry->new( name => $name );
+    my $entry = $c->repository->lookup( $name );
+    if ($c->req->method eq 'POST') {
+        my $entry = $c->repository->lookup( $name );
+        $entry->body(scalar $c->req->param('body'));
+        $entry->update();
+        return $c->redirect( "/e/" . uri_escape_utf8 $name);
+    }
     return $c->render( 'edit.tt', { entry => $entry } );
-};
-post '/e/:name/edit' => sub {
-    my ( $c, $args ) = @_;
-    my $name = $args->{name} // die;
-    $name = uri_unescape $name;
-    $name = decode_utf8 $name;
-    my $entry = Sakaki::Entry->new( name => $name );
-	$entry->body(scalar $c->req->param('body'));
-    Sakaki::API::File->edit(
-        c    => $c,
-		entry => $entry,
-    );
-    return $c->redirect( "/e/" . uri_escape_utf8 $name);
 };
 
 any '/create' => sub {
@@ -64,19 +57,18 @@ any '/create' => sub {
     my $body = $c->req->param('body');
     my $formatter = $c->req->param('formatter');
     if ( $c->req->method eq 'POST' && ( $name && $body && $formatter ) ) {
+        my $repository = repo();
         my $entry = Sakaki::Entry->new(
-            name      => $name,
-            body      => $body,
-            formatter => $formatter,
+            name       => $name,
+            body       => $body,
+            formatter  => $formatter,
+            repository => $c->repository,
         );
         if ( -e $entry->fullpath ) {
             return $c->show_error(
                 'This entry is already exists: ' . $entry->name );
         }
-        my $name = Sakaki::API::File->create(
-            entry => $entry,
-            c     => $c,
-        );
+        $entry->create();
         return $c->redirect( "/e/" . $entry->name_raw );
     }
 

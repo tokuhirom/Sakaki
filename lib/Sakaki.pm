@@ -15,6 +15,12 @@ sub root_dir {
 	return $c->config->{root_dir} // die "Missing configuration for root_dir";
 }
 
+use Sakaki::Repository;
+sub repository {
+    my ($c) = @_;
+    return Sakaki::Repository->new(root_dir => $c->root_dir);
+}
+
 # initialize database
 use DBI;
 sub setup_schema {
