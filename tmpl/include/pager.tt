@@ -7,7 +7,14 @@
                 <li class="prev disabled"><a href="#">&larr; Back</a><li>
             [% END %]
 
-            <li class="active"><a href="#">[% pager.current_page %]</a></li>
+            [% IF pager.can('pages_in_navigation') %]
+                [% # IF Data::Page::Navigation is loaded %]
+                [% FOR p IN pager.pages_in_navigation(5) %]
+                    <li [% IF p==pager.current_page %]class="active"[% END %]><a href="[% uri_with({page => p}) %]">[% p %]</a></li>
+                [% END %]
+            [% ELSE %]
+                <li><a href="#">[% pager.current_page %]</a></li>
+            [% END %]
 
             [% IF pager.next_page %]
                 <li class="next"><a href="[% uri_with({page => pager.next_page}) %]" rel="next">Back &rarr;</a><li>

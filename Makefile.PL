@@ -22,6 +22,7 @@ WriteMakefile(
         'Plack::Middleware::Session'                         => '0',
 		'Smart::Args' => 0,
 		'Data::Page' => 0,
+		'Data::Page::Navigation' => 0,
 		'Text::Xatena' => 0,
 		'HTML::Scrubber' => '0',
 		'File::pushd' => 0,
