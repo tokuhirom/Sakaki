@@ -12,6 +12,7 @@ use Plack::Session::Store::DBI;
 use DBI;
 use File::Path;
 
+mkpath(Sakaki->config->{root_dir});
 {
     mkpath('db');
     my $c = Sakaki->new();
