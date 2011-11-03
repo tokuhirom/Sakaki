@@ -10,8 +10,10 @@ use Sakaki::Web;
 use Sakaki;
 use Plack::Session::Store::DBI;
 use DBI;
+use File::Path;
 
 {
+    mkpath('db');
     my $c = Sakaki->new();
     $c->setup_schema();
 }
