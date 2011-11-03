@@ -3,9 +3,24 @@
 <div class="row">
     <div class="span16">
 		<form method="post" action="[% uri_for('/create') %]">
-			<input type="text" placeholder="Title" name="name" />
-			<textarea name="body" placeholder="Body here"></textarea>
-			<input type="submit" value="Create" class="btn primary" />
+            <fieldset>
+            <legend>Create new page</legend>
+            <div class="clearfix">
+                <label for="title">Title</label>
+                <div class="input">
+                    <input type="text" placeholder="Title" name="name" id="title" />
+                </div>
+            </div>
+            <div class="clearfix">
+                <label for="body">Body</label>
+                <div class="input">
+                    <textarea name="body" placeholder="Body here" id="body" rows="20" class="xxlarge"></textarea>
+                </div>
+            </div>
+            <div class="actions">
+                <input type="submit" value="Create" class="btn primary" />
+            </div>
+            </fieldset>
 		</form>
     </div>
 </div>
