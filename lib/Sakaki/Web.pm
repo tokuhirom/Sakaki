@@ -7,8 +7,18 @@ use File::Spec;
 
 # dispatcher
 use Sakaki::Web::Dispatcher;
+use Try::Tiny;
 sub dispatch {
-    return Sakaki::Web::Dispatcher->dispatch($_[0]) or die "response is not generated";
+    my $c = shift;
+    try {
+        return Sakaki::Web::Dispatcher->dispatch($c) or die "response is not generated";
+    } catch {
+        if (UNIVERSAL::isa($_, 'Sakaki::Exception::ValidationError')) {
+            $c->show_error("Validation error: " . $_);
+        } else {
+            $_;
+        }
+    };
 }
 
 # setup view class
@@ -60,12 +70,9 @@ __PACKAGE__->add_trigger(
     },
 );
 
-__PACKAGE__->add_trigger(
-    BEFORE_DISPATCH => sub {
-        my ( $c ) = @_;
-        # ...
-        return;
-    },
-);
+sub show_error {
+    my ( $c, $msg ) = @_;
+    $c->render( 'error.tt', { message => $msg } );
+}
 
 1;

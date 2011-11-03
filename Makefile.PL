@@ -24,7 +24,8 @@ WriteMakefile(
 		'Data::Page' => 0,
 		'Text::Xatena' => 0,
 		'HTML::Scrubber' => '0',
-		'File::pushd',
+		'File::pushd' => 0,
+		'FormValidator::Lite' => 0,
     },
     MIN_PERL_VERSION => '5.008001',
     (-d 'xt' and $ENV{AUTOMATED_TESTING} || $ENV{RELEASE_TESTING}) ? (

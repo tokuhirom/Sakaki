@@ -6,6 +6,8 @@ use parent qw/Amon2/;
 our $VERSION='0.01';
 use 5.010001;
 
+use Sakaki::Exceptions;
+
 __PACKAGE__->load_plugin(qw/DBI/);
 
 sub root_dir {

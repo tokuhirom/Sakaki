@@ -15,33 +15,83 @@ use Sakaki::Util qw(slurp);
 use Mouse;
 
 has name => (
-	is => 'ro',
-	isa => 'Str',
-	required => 1,
+    is       => 'ro',
+    isa      => 'Str',
+    required => 1,
+    trigger => sub {
+        my ($self, $name) = @_;
+        if ($name =~ /\.\.|\0/ || $name =~ /\.format$/) {
+            die Sakaki::Exception::ValidationError->new( reason =>
+                "You cannot contain some chars in the entry name for security reason."
+            );
+        }
+    },
 );
 
-has name_raw => (
-	is => 'rw',
-	isa => 'Str',
-	default => sub {
-		my $self = shift;
-		uri_escape_utf8 $self->name;
-	},
+has body => (
+    is => 'rw',
+    isa => 'Str',
+    required => 1,
+    lazy => 1,
+    default => sub {
+        my $self = shift;
+        return slurp($self->filename);
+    },
 );
+
+has formatter => (
+    is => 'ro',
+    isa => 'ClassName',
+    required => 1,
+    lazy => 1,
+    trigger => sub {
+        my ($self, $formatter) = @_;
+        unless (Sakaki::Formatter->is_formatter($formatter)) {
+            die Sakaki::Exception::ValidationError->new(
+                reason => "Unknown formatter name: $formatter",
+            );
+        }
+    },
+    default => sub {
+        my $self = shift;
+        my $formatter = do{
+            my $formatfile = catfile( Amon2->context->root_dir,
+                '.' . $self->name_raw . '.format' );
+            if (-f $formatfile) {
+                my $name = slurp($formatfile);
+                $name =~ s/\r?\n$//;
+                $name;
+            } else {
+                'Sakaki::Formatter::Plain'
+            }
+        };
+        unless (Sakaki::Formatter->is_formatter($formatter)) {
+            die "Bad formatter name: $formatter";
+        }
+        $formatter;
+    },
+);
+
+sub name_raw {
+    my $self = shift;
+    uri_escape_utf8 $self->name;
+}
 
 sub new_from_raw {
 	my ($self, $name_raw) = @_;
 	Sakaki::Entry->new(name => decode_utf8(uri_unescape($name_raw)));
 }
 
-sub filename {
+sub fullpath {
 	my $self = shift;
 	catfile(Amon2->context->root_dir, $self->name_raw);
 }
 
+sub filename { shift->fullpath }
+
 sub mtime {
 	my $self = shift;
-	$self->{mtime} //= stat($self->filename)->mtime;
+	$self->{mtime} //= stat($self->fullpath)->mtime;
 }
 
 sub mtime_piece {
@@ -49,34 +99,10 @@ sub mtime_piece {
 	Time::Piece->new($self->mtime);
 }
 
-sub formatter {
-	my $self = shift;
-
-    my $formatter = do{
-        my $formatfile = catfile( Amon2->context->root_dir,
-            '.' . $self->name_raw . '.format' );
-        if (-f $formatfile) {
-            my $name = slurp($formatfile);
-            $name =~ s/\r?\n$//;
-            $name;
-        } else {
-            'Sakaki::Formatter::Plain'
-        }
-    };
-    unless (Sakaki::Formatter->is_formatter($formatter)) {
-        die "Bad formatter name: $formatter";
-    }
-	return $formatter;
-}
 
 sub format {
 	my $self = shift;
 	$self->formatter->moniker;
-}
-
-sub body {
-	my $self = shift;
-	return slurp($self->filename);
 }
 
 sub html {

@@ -19,21 +19,15 @@ use Sakaki::Formatter;
 
 sub create {
     args my $class,
-         my $name => 'Str',
-         my $body => 'Str',
+         my $entry => 'Sakaki::Entry',
          my $c,
          my $formatter => { isa => 'Str', default => 'Sakaki::Formatter::Plain' },
          ;
 
-    unless (Sakaki::Formatter->is_formatter($formatter)) {
-        die "Bad formatter name: $formatter";
-    }
+	my $name = $entry->name;
+	my $body = $entry->body;
 
-    if ($name =~ /\.\.|\0/ || $name =~ /\.format$/) {
-        die "security issue: $name";
-    }
-
-    my $filename = uri_escape_utf8($name);
+    my $filename = $entry->fullpath;
     {
         my $g = pushd($c->root_dir);
 
@@ -65,21 +59,16 @@ sub create {
 sub edit {
     args my $class,
          my $c,
-         my $name,
-         my $body,
+         my $entry,
          ;
 
-    my $entry = Sakaki::Entry->new(name => $name);
     {
         my $g = pushd($c->root_dir);
         open my $fh, '+<:utf8', $entry->name_raw;
         flock($fh, LOCK_EX);
         my $src = do { local $/, <$fh> };
-        if ($src eq $body) {
-            return; # no changes
-        }
         seek($fh, 0, SEEK_SET);
-        print {$fh} $body;
+        print {$fh} $entry->body;
         system('git', 'add', $entry->name_raw);
         system('git', 'commit', '--author', 'Anonymous Coward <anonymous@example.com>', '-m', 'modified', $entry->name_raw);
         close $fh;
