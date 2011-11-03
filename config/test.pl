@@ -1,5 +1,6 @@
 use File::Spec;
 use File::Basename qw(dirname);
+use File::Temp qw(tempdir);
 my $basedir = File::Spec->rel2abs(File::Spec->catdir(dirname(__FILE__), '..'));
 my $dbpath;
 if ( -d '/home/dotcloud/') {
@@ -16,4 +17,5 @@ if ( -d '/home/dotcloud/') {
             sqlite_unicode => 1,
         }
     ],
+    root_dir => tempdir(),
 };
