@@ -2,11 +2,20 @@
 
 <div class="row">
     <div class="span16">
-		<h1>Edit [% name %]</h1>
 		<form method="post" action="[% uri_for('/e/' _ uri(name) _ '/edit') %]">
-			<input type="hidden" name="name" value="[% name %]" />
-			<textarea name="body" placeholder="Body here">[% body %]</textarea>
-			<input type="submit" value="Create" class="btn primary" />
+            <fieldset>
+                <legend>Edit &#39;[% name %]&#39;</legend>
+                <input type="hidden" name="name" value="[% name %]" />
+                <div class="clearfix">
+                    <label for="body">Body</label>
+                    <div class="input">
+                        <textarea class="xxlarge" name="body" placeholder="Body here" rows="20">[% body %]</textarea>
+                    </div>
+                </div>
+                <div class="actions">
+                    <input type="submit" value="Update" class="btn primary" />
+                </div>
+            </fieldset>
 		</form>
     </div>
 </div>
