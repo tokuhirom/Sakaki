@@ -8,7 +8,7 @@
 			<a href="/e/[% name | uri %]/log">Log</a>
 		</div>
 		<h2>[% name %]</h2>
-		[% body %]
+		[% entry.html %]
     </div>
 </div>
 

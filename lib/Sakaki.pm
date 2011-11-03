@@ -27,24 +27,4 @@ sub setup_schema {
     }
 }
 
-use Teng;
-use Teng::Schema::Loader;
-sub db {
-    my $self = shift;
-    if ( !defined $self->{db} ) {
-        my $conf = $self->config->{'DBI'}
-        or die "missing configuration for 'DBI'";
-        my $dbh = DBI->connect(@{$conf});
-        my $schema = Teng::Schema::Loader->load(
-            namespace => 'Sakaki::DB',
-            dbh       => $dbh,
-	    );
-        $self->{db} = Teng->new(
-            dbh    => $dbh,
-            schema => $schema,
-	    );
-    }
-    return $self->{db};
-}
-
 1;

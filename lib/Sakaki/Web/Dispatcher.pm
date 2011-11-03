@@ -23,8 +23,8 @@ get '/e/:name' => sub {
     my $name = $args->{name} // die;
        $name = uri_unescape $name;
        $name = decode_utf8 $name;
-    my $body = Sakaki::API::File->lookup(c => $c, name => $name);
-    return $c->render('show.tt', {body => $body, name => $name});
+    my $entry = Sakaki::Entry->new(name => $name);
+    return $c->render('show.tt', {entry => $entry, name => $name});
 };
 get '/e/:name/log' => sub {
     my ($c, $args) = @_;
@@ -39,8 +39,8 @@ get '/e/:name/edit' => sub {
     my $name = $args->{name} // die;
        $name = uri_unescape $name;
        $name = decode_utf8 $name;
-    my $body = Sakaki::API::File->lookup(c => $c, name => $name);
-    return $c->render('edit.tt', {body => $body, name => $name});
+    my $entry = Sakaki::Entry->new(name => $name);
+    return $c->render('edit.tt', {entry => $entry});
 };
 post '/e/:name/edit' => sub {
     my ($c, $args) = @_;
@@ -55,17 +55,22 @@ post '/e/:name/edit' => sub {
     return $c->redirect("/e/" . uri_escape_utf8 $name);
 };
 
-get '/create' => sub {
+any '/create' => sub {
     my ($c) = @_;
-    return $c->render('add.tt');
-};
-post '/create' => sub {
-    my ($c) = @_;
-    my $name = Sakaki::API::File->create(
-        %{ $c->req->parameters },
-        c => $c,
-    );
-    return $c->redirect("/e/" . uri_escape_utf8 $name);
+
+	if ($c->req->method eq 'POST') {
+		my $name = Sakaki::API::File->create(
+			%{ $c->req->parameters },
+			c => $c,
+		);
+		return $c->redirect("/e/" . uri_escape_utf8 $name);
+	}
+
+    my $formatters =
+      [ map { +{ name => $_->moniker, pkg => $_ } }
+          Sakaki::Formatter->available_formatters() ];
+
+    return $c->render('add.tt', { formatters => $formatters } );
 };
 
 post '/account/logout' => sub {

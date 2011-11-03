@@ -23,6 +23,8 @@ WriteMakefile(
 		'Smart::Args' => 0,
 		'Data::Page' => 0,
 		'Text::Xatena' => 0,
+		'HTML::Scrubber' => '0',
+		'File::pushd',
     },
     MIN_PERL_VERSION => '5.008001',
     (-d 'xt' and $ENV{AUTOMATED_TESTING} || $ENV{RELEASE_TESTING}) ? (

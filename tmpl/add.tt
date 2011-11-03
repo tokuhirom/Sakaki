@@ -8,13 +8,23 @@
             <div class="clearfix">
                 <label for="title">Title</label>
                 <div class="input">
-                    <input type="text" placeholder="Title" name="name" id="title" />
+                    <input type="text" placeholder="Title" name="name" id="title" required />
                 </div>
             </div>
             <div class="clearfix">
                 <label for="body">Body</label>
                 <div class="input">
-                    <textarea name="body" placeholder="Body here" id="body" rows="20" class="xxlarge"></textarea>
+                    <textarea name="body" placeholder="Body here" id="body" rows="20" class="xxlarge" required ></textarea>
+                </div>
+            </div>
+            <div class="clearfix">
+                <label for="formatter">Formatter</label>
+                <div class="input">
+					<select name="formatter" required>
+						[% FOR v IN formatters %]
+						<option value="[% v.pkg %]">[% v.name %]</option>
+						[% END %]
+					</select>
                 </div>
             </div>
             <div class="actions">

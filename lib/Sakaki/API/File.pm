@@ -12,15 +12,24 @@ use Encode qw(decode_utf8);
 use Sakaki::Entry;
 use File::pushd;
 use Fcntl qw(:flock SEEK_END SEEK_SET);
+use Text::Xslate::Util qw(mark_raw);
+
+use Sakaki::StripScripts;
+use Sakaki::Formatter;
 
 sub create {
     args my $class,
-         my $name,
-         my $body,
+         my $name => 'Str',
+         my $body => 'Str',
          my $c,
+         my $formatter => { isa => 'Str', default => 'Sakaki::Formatter::Plain' },
          ;
 
-    if ($name =~ /\.\.|\0/) {
+    unless (Sakaki::Formatter->is_formatter($formatter)) {
+        die "Bad formatter name: $formatter";
+    }
+
+    if ($name =~ /\.\.|\0/ || $name =~ /\.format$/) {
         die "security issue: $name";
     }
 
@@ -32,30 +41,25 @@ sub create {
             die "Already exists";
         }
 
-        open my $fh, '>:utf8', $filename;
-        print {$fh} $body;
-        close $fh;
+        {
+            open my $fh, '>:utf8', $filename;
+            print {$fh} $body;
+            close $fh;
+        }
+
+        my $formatfile = ".${filename}.format";
+        {
+            open my $fh, '>:utf8', $formatfile;
+            print {$fh} $formatter;
+            close $fh;
+        }
 
         system('git', 'init');
-        system('git', 'add', $filename);
-        system('git', 'commit', '--author', 'Anonymous Coward <anonymous@example.com>', '-m', 'initial import', $filename);
+        system('git', 'add', $filename, $formatfile);
+        system('git', 'commit', '--author', 'Anonymous Coward <anonymous@example.com>', '-m', 'initial import', $filename, $formatfile);
     }
 
     $name;
-}
-
-sub lookup {
-    args my $class,
-         my $c,
-         my $name,
-         ;
-
-    my $fullname = catfile($c->root_dir, uri_escape_utf8 $name);
-    open my $fh, '<', $fullname;
-    my $body = do {local $/; <$fh> };
-    close $fh;
-
-    return $body;
 }
 
 sub edit {

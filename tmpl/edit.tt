@@ -2,14 +2,20 @@
 
 <div class="row">
     <div class="span16">
-		<form method="post" action="[% uri_for('/e/' _ uri(name) _ '/edit') %]">
+		<form method="post" action="[% uri_for('/e/' _ uri(entry.name) _ '/edit') %]">
             <fieldset>
-                <legend>Edit &#39;[% name %]&#39;</legend>
-                <input type="hidden" name="name" value="[% name %]" />
+                <legend>Edit &#39;[% entry.name %]&#39;</legend>
+                <input type="hidden" name="name" value="[% entry.name %]" />
                 <div class="clearfix">
                     <label for="body">Body</label>
                     <div class="input">
-                        <textarea class="xxlarge" name="body" placeholder="Body here" rows="20">[% body %]</textarea>
+                        <textarea class="xxlarge" name="body" placeholder="Body here" rows="20">[% entry.body %]</textarea>
+                    </div>
+                </div>
+                <div class="clearfix">
+                    <label for="body">Format</label>
+                    <div class="input">
+						[% entry.format %]
                     </div>
                 </div>
                 <div class="actions">
