@@ -3,7 +3,6 @@ use strict;
 use warnings;
 use utf8;
 use Amon2::Web::Dispatcher::Lite;
-use Sakaki::API::File;
 use URI::Escape qw(uri_escape_utf8 uri_unescape);
 use Encode qw(decode_utf8);
 use FormValidator::Lite;
