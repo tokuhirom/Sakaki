@@ -10,12 +10,18 @@ use Data::Page::Navigation;
 
 any '/' => sub {
     my ($c) = @_;
+    my $name = 'IndexPage';
+    my $entry = $c->repository->lookup($name);
+    return $c->render( 'show.tt', { entry => $entry } );
+};
+any '/recent' => sub {
+    my ($c) = @_;
     my $current_page = 0 + ( $c->req->param('page') || 1 );
     my ( $entries, $pager ) = $c->repository->get_recent(
         entries_per_page => 50,
         current_page     => $current_page,
     );
-    $c->render( 'index.tt', { entries => $entries, pager => $pager } );
+    $c->render( 'recent.tt', { entries => $entries, pager => $pager } );
 };
 get '/search' => sub {
     my ($c) = @_;

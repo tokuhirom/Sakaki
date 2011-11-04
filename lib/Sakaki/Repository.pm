@@ -23,6 +23,26 @@ has root_dir => (
     required => 1,
 );
 
+sub BUILD {
+    my $self = shift;
+
+    unless (-f catfile($self->root_dir, 'IndexPage')) {
+        my $entry = Sakaki::Entry->new(
+            repository => $self,
+            name => 'IndexPage',
+            body => <<'...',
+This is a top page of Sakaki.
+
+- foo
+- bar
+- baz
+...
+            formatter => 'Sakaki::Formatter::Xatena',
+        );
+        $self->create($entry);
+    }
+}
+
 sub create {
     my ($self, $entry) = @_;
     $entry // die;

@@ -26,6 +26,7 @@
                 <h3><a href="/">Sakaki</a></h3>
                 <ul class="nav">
                     <li><a href="/create">Create</a></li>
+                    <li><a href="/recent">Recent</a></li>
                 </ul>
                 <form class="pull-left" action="/search">
                     <input type="text" placeholder="Search" name="keyword" >
