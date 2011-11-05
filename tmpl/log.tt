@@ -1,14 +1,20 @@
-[% WRAPPER 'include/layout.tt' %]
+[% WRAPPER 'include/layout.tt' WITH bodyID='Log' %]
 
 <div class="row">
     <div class="span16">
 		<div>
-			<a href="/e/[% name | uri %]/edit">Edit</a>
+			<a href="/e/[% entry.name | uri %]/edit">Edit</a>
 			|
-			<a href="/e/[% name | uri %]">Show</a>
+			<a href="/e/[% entry.name | uri %]">Show</a>
 		</div>
-		<h2>[% name %]</h2>
-		<pre>[% log %]</pre>
+		<h2>[% entry.name %]</h2>
+        [% FOR v IN logs %]
+            <section class="log">
+                <div class="hash">[% v.hash %]</div>
+                <div class="author">[% v.author_name %]</div>
+                <div class="date">[% v.author_time_piece.strftime('%Y-%m-%d(%a) %H:%M') %]</div>
+            </section>
+        [% END %]
     </div>
 </div>
 

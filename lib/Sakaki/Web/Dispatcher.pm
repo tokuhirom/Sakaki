@@ -52,8 +52,8 @@ get '/e/:name/log' => sub {
     $name = uri_unescape $name;
     $name = decode_utf8 $name;
     my $entry = $c->repository->lookup($name);
-    my $log = $entry->get_log();
-    return $c->render( 'log.tt', { log => $log, name => $entry->name } );
+    my @logs = $entry->get_log();
+    return $c->render( 'log.tt', { logs => \@logs, entry => $entry } );
 };
 any '/e/:name/edit' => sub {
     my ( $c, $args ) = @_;

@@ -12,6 +12,7 @@ use File::Spec::Functions qw(catfile rel2abs);
 use URI::Escape qw(uri_escape_utf8 uri_unescape);
 use Encode qw(decode_utf8);
 use Data::Page;
+use Sakaki::Log;
 
 use Sakaki::Entry;
 
@@ -118,11 +119,20 @@ sub get_log {
     my ($self, $entry) = @_;
     $entry // die "Missing mandatory parameter: entry";
 
-    my $log = do {
-        my $g = pushd($self->root_dir);
-        `git log --patience -p -50 --no-color @{[ $entry->name_raw ]}`;
-    };
-    return $log;
+	my $g = pushd($self->root_dir);
+	# %H commit hash
+	# %an author name
+	# %at unix time
+	# %s subject
+	my $pretty = join('xyZZy', qw(%H %an %at %s));
+	# TODO: paginate
+    my @logs = map {
+        my %args;
+        @args{qw( hash author_name author_time subject )} = split /xyZZy/, $_;
+        Sakaki::Log->new(%args);
+      } split /\n/,
+      `git log --pretty="$pretty" -50 --no-color @{[ $entry->name_raw ]}`;
+    return @logs;
 }
 
 sub get_recent {
