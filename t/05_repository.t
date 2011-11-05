@@ -7,7 +7,7 @@ use Sakaki::Repository;
 use Sakaki::Entry;
 use File::Temp qw(tempdir);
 
-my $tmpdir = tempdir();
+my $tmpdir = tempdir(CLEANUP => 1);
 
 my $repository = Sakaki::Repository->new(root_dir => $tmpdir);
 subtest 'create' => sub {
