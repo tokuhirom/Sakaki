@@ -1,4 +1,4 @@
-[% WRAPPER 'include/layout.tt' WITH bodyID='Log' %]
+[% WRAPPER 'include/layout.tt' WITH bodyID='Log' subtitle="Log '" _ entry.name _ "'" %]
 
 <div class="row">
     <div class="span16">
