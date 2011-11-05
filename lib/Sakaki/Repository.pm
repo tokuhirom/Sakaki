@@ -135,6 +135,29 @@ sub get_log {
     return @logs;
 }
 
+sub get_log_detail {
+    my ($self, $entry, $hash) = @_;
+    $entry // die "Missing mandatory parameter: entry";
+
+	my $g = pushd($self->root_dir);
+	# %H commit hash
+	# %an author name
+	# %at unix time
+	# %s subject
+	my $pretty = join('xyZZy', qw(%H %an %at %s));
+	# TODO: paginate
+    my $log_raw = `git log --pretty="$pretty" -p -1 --no-color '$hash^..$hash' @{[ $entry->name_raw ]}`;
+    my @lines = split /\n/, $log_raw;
+    my $log = do {
+        my $header = shift @lines;
+        my %args;
+        @args{qw( hash author_name author_time subject )} = split /xyZZy/, $header;
+        Sakaki::Log->new(%args);
+    };
+    $log->diff(join("\n", @lines));;
+    return $log;
+}
+
 sub get_recent {
     args my $self,
          my $entries_per_page => 'Int',

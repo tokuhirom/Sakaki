@@ -55,6 +55,16 @@ get '/e/:name/log' => sub {
     my @logs = $entry->get_log();
     return $c->render( 'log.tt', { logs => \@logs, entry => $entry } );
 };
+get '/e/:name/log/:hash' => sub {
+    my ( $c, $args ) = @_;
+    my $name = $args->{name} // die;
+    $name = uri_unescape $name;
+    $name = decode_utf8 $name;
+    my $hash = $args->{hash} // die;
+    my $entry = $c->repository->lookup($name);
+    my $log = $entry->get_log_detail($hash);
+    return $c->render( 'log_detail.tt', { log => $log, entry => $entry } );
+};
 any '/e/:name/edit' => sub {
     my ( $c, $args ) = @_;
     my $name = $args->{name} // die;

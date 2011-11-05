@@ -1,0 +1,20 @@
+[% WRAPPER 'include/layout.tt' WITH bodyID='Log' %]
+
+<div class="row">
+    <div class="span16">
+		<div>
+			<a href="/e/[% entry.name | uri %]/edit">Edit</a>
+			|
+			<a href="/e/[% entry.name | uri %]">Show</a>
+		</div>
+		<h2>[% entry.name %]</h2>
+        <section class="log">
+            <div class="hash"><a href="[% uri_for('/e/' _ uri(entry.name) _ '/log/' _ log.hash) %]">[% v.hash %]</a></div>
+            <div class="author">[% log.author_name %]</div>
+            <div class="date">[% log.author_time_piece.strftime('%Y-%m-%d(%a) %H:%M') %]</div>
+            <div class="diff"><pre>[% log.diff %]</pre></div>
+        </section>
+    </div>
+</div>
+
+[% END %]

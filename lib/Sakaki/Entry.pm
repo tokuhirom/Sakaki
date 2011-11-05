@@ -81,11 +81,11 @@ has repository => (
     isa      => 'Sakaki::Repository',
     required => 1,
 );
-for my $meth (qw(create update get_log)) {
+for my $meth (qw(create update get_log get_log_detail)) {
     no strict 'refs';
     *{__PACKAGE__ . '::' . $meth} = sub {
         my ($self) = @_;
-        $self->repository->$meth($self);
+        $self->repository->$meth(@_);
     };
 }
 
