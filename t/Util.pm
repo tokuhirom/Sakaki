@@ -13,6 +13,7 @@ use lib File::Spec->rel2abs(File::Spec->catdir(dirname(__FILE__), '..', 'extlib'
 use lib File::Spec->rel2abs(File::Spec->catdir(dirname(__FILE__), '..', 'lib'));
 use parent qw/Exporter/;
 use Test::More 0.98;
+use File::Path;
 
 our @EXPORT = qw(slurp);
 
@@ -40,6 +41,7 @@ sub slurp {
 # initialize database
 use Sakaki;
 {
+    mkpath('db');
     unlink 'db/test.db' if -f 'db/test.db';
 
     my $c = Sakaki->new();
