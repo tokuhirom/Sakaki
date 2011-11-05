@@ -35,9 +35,14 @@
             </div><!-- /topbar-inner -->
         </div><!-- /topbar -->
     </div>
-    <div class="container">
-        <div id="main">
-            [% content %]
+    <div class="container-fluid">
+        <div class="sidebar">
+            [% c().sidebar.html %]
+        </div>
+        <div class="content">
+            <div id="main">
+                [% content %]
+            </div>
         </div>
     </div>
     <footer class="footer">

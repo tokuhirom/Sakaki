@@ -75,4 +75,9 @@ sub show_error {
     $c->render( 'error.tt', { message => $msg } );
 }
 
+sub sidebar {
+    my ($c) = @_;
+    $c->repository->lookup('SideBar');
+}
+
 1;
