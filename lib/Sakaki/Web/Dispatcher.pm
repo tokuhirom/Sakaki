@@ -56,7 +56,7 @@ get '/search' => sub {
 get '/e/:name' => sub {
     my ( $c, $args ) = @_;
     my $entry = $args->{entry} // die;
-    return $c->render( 'show.tt', { entry => $entry, name => $entry->name } );
+    return $c->render( 'show.tt', { entry => $entry } );
 };
 get '/e/:name/log' => sub {
     my ( $c, $args ) = @_;
