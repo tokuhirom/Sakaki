@@ -100,6 +100,7 @@ sub update {
 			}
 
             seek($fh, 0, SEEK_SET);
+            truncate($fh, 0);
             print {$fh} $entry->body;
             system('git', 'add', $entry->name_raw, $formatfile);
             system('git', 'commit', '--author', 'Anonymous Coward <anonymous@example.com>', '-m', 'modified', $entry->name_raw, $formatfile);
