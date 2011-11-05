@@ -45,7 +45,7 @@ has body => (
 );
 
 has formatter => (
-    is => 'ro',
+    is => 'rw',
     isa => 'ClassName',
     required => 1,
     lazy => 1,
@@ -127,6 +127,11 @@ sub html {
        $html = mark_raw($html);
 
 	return $html;
+}
+
+sub as_hashref {
+	my $self = shift;
+	return +{ map { $_ => $self->$_ } qw(body formatter name) };
 }
 
 1;

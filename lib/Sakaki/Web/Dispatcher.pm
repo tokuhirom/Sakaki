@@ -62,12 +62,16 @@ any '/e/:name/edit' => sub {
        $name = decode_utf8 $name;
     my $entry = $c->repository->lookup( $name );
     if ($c->req->method eq 'POST') {
-        my $entry = $c->repository->lookup( $name );
         $entry->body(scalar $c->req->param('body'));
+        $entry->formatter(scalar $c->req->param('formatter'));
         $entry->update();
         return $c->redirect( "/e/" . uri_escape_utf8 $name);
     }
-    return $c->render( 'edit.tt', { entry => $entry } );
+	$c->fillin_form( $entry->as_hashref );
+    my $formatters =
+      [ map { +{ name => $_->moniker, pkg => $_ } }
+          Sakaki::Formatter->available_formatters() ];
+    return $c->render( 'edit.tt', { entry => $entry, formatters => $formatters } );
 };
 
 any '/create' => sub {

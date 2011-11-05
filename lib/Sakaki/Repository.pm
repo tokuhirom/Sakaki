@@ -83,11 +83,25 @@ sub update {
         open my $fh, '+<:utf8', $entry->name_raw;
         flock($fh, LOCK_EX);
         my $src = do { local $/, <$fh> };
-        if ($src ne $entry->body) {
+
+		my $formatfile = ".@{[ $entry->name_raw ]}.format";
+		my $origfmt = do {
+			open my $fh, '<:utf8', $formatfile;
+			local $/;
+			<$fh>;
+		};
+
+        if ($src ne $entry->body || $origfmt ne $entry->formatter) {
+			{
+				open my $fh, '>:utf8', $formatfile;
+				print {$fh} $entry->formatter;
+				close $fh;
+			}
+
             seek($fh, 0, SEEK_SET);
             print {$fh} $entry->body;
-            system('git', 'add', $entry->name_raw);
-            system('git', 'commit', '--author', 'Anonymous Coward <anonymous@example.com>', '-m', 'modified', $entry->name_raw);
+            system('git', 'add', $entry->name_raw, $formatfile);
+            system('git', 'commit', '--author', 'Anonymous Coward <anonymous@example.com>', '-m', 'modified', $entry->name_raw, $formatfile);
         }
         close $fh;
     }
