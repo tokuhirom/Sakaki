@@ -27,6 +27,7 @@ WriteMakefile(
 		'HTML::Scrubber' => '0',
 		'File::pushd' => 0,
 		'Text::Markdown' => 0,
+		'IPC::System::Simple' => 0,
     },
     MIN_PERL_VERSION => '5.008001',
     (-d 'xt' and $ENV{AUTOMATED_TESTING} || $ENV{RELEASE_TESTING}) ? (
