@@ -45,5 +45,12 @@ subtest 'search' => sub {
     isa_ok($pager, 'Data::Page');
 };
 
+subtest 'remove' => sub {
+    my $entry = $repository->lookup('test');
+    ok(-f $entry->fullpath);
+    $entry->remove();
+    ok(!-f $entry->fullpath);
+};
+
 done_testing;
 

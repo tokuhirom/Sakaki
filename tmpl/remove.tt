@@ -1,0 +1,16 @@
+[% WRAPPER 'include/layout.tt' WITH subtitle='Remove: ' _ entry.name %]
+
+<div class="row">
+    <div class="span16">
+		<h1>Remove page</h1>
+        <p>Really remove '[% entry.name %]'?</p>
+
+        <form method="post" action="[% uri_for('/e/' _ uri(entry.name) _ '/remove') %]">
+            <div class="well">
+                <input type="submit" value="Yes, remove it" class="danger btn" />
+            </div>
+        </form>
+    </div>
+</div>
+
+[% END %]

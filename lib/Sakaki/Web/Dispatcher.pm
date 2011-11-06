@@ -86,6 +86,16 @@ any '/e/:name/edit' => sub {
           Sakaki::Formatter->available_formatters() ];
     return $c->render( 'edit.tt', { entry => $entry, formatters => $formatters } );
 };
+any '/e/:name/remove' => sub {
+    my ($c, $args) = @_;
+
+    my $entry = $args->{entry} // die;
+    if ($c->req->method eq 'POST') {
+        $entry->remove();
+        return $c->redirect( "/" );
+    }
+    return $c->render( 'remove.tt', { entry => $entry } );
+};
 
 any '/create' => sub {
     my ($c) = @_;

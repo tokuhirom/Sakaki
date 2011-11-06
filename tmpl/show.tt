@@ -6,6 +6,8 @@
 			<a href="/e/[% entry.name | uri %]/edit">Edit</a>
 			|
 			<a href="/e/[% entry.name | uri %]/log">Log</a>
+			|
+			<a href="/e/[% entry.name | uri %]/remove">Remove</a>
 		</div>
 		<h2>[% entry.name %]</h2>
 		[% entry.html %]

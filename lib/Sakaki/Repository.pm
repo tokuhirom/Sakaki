@@ -1,6 +1,6 @@
 package Sakaki::Repository;
 use strict;
-use warnings;
+use warnings FATAL => 'all';
 use utf8;
 use Carp;
 use File::pushd;
@@ -117,6 +117,18 @@ sub update {
             system('git', 'commit', '--author', 'Anonymous Coward <anonymous@example.com>', '-m', 'modified', $entry->name_raw, $formatfile);
         }
         close $fh;
+    }
+}
+
+sub remove {
+    my ($self, $entry) = @_;
+
+    {
+        my $g = pushd($self->root_dir);
+
+		my $formatfile = ".@{[ $entry->name_raw ]}.format";
+        system('git', 'rm', $entry->name_raw, $formatfile);
+        system('git', 'commit', '--author', 'Anonymous Coward <anonymous@example.com>', '-m', 'remove page', $entry->name_raw, $formatfile);
     }
 }
 
