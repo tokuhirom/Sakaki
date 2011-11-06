@@ -13,7 +13,7 @@ $scrubber->rules(
     },
     style  => 0,
     script => 0,
-    link   => {
+    a   => {
         href => qr{^https?://},    # only URL with http://
         rel  => 1,
         type => 1,
