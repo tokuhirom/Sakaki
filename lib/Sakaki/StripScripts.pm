@@ -7,14 +7,14 @@ use HTML::Scrubber;
 my $scrubber = HTML::Scrubber->new();
 $scrubber->rules(
     img => {
-        src => qr{^http://},    # only URL with http://
+        src => qr{^https?://},    # only URL with http://
         alt => 1,               # alt attributes allowed
         '*' => 0,               # deny all others
     },
     style  => 0,
     script => 0,
     link   => {
-        href => qr{^http://},    # only URL with http://
+        href => qr{^https?://},    # only URL with http://
         rel  => 1,
         type => 1,
     },
