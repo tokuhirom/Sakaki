@@ -13,6 +13,9 @@ $scrubber->rules(
     },
     style  => 0,
     script => 0,
+    pre   => {
+        class => qr{^prettyprint code lang-[a-z]+$},
+    },
     link   => {
         href => qr{^https?://},    # only URL with http://
         rel  => 1,

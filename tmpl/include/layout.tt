@@ -10,8 +10,9 @@
         <script src="[% uri_for('/static/js/jquery-1.6.4.min.js') %]"></script>
         <link rel="stylesheet/less" type="text/css" href="[% static_file('/static/bootstrap/lib/bootstrap.less') %]">
         <script src="[% uri_for('/static/js/less-1.1.4.min.js') %]"></script>
-    <link href="[% uri_for('/static/bootstrap/bootstrap.min.css') %]" rel="stylesheet" type="text/css" />
     <script src="[% uri_for('/static/bootstrap/bootstrap-dropdown.js') %]"></script>
+    <link href="[% static_file('static/google-code-prettify/prettify.css') %]" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="[% static_file('static/google-code-prettify/prettify.js') %]"></script>
 
 
     <link href="[% static_file('/static/css/main.css') %]" rel="stylesheet" type="text/css" media="screen" />
@@ -20,7 +21,7 @@
         <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 </head>
-<body[% IF bodyID %] id="[% bodyID %]"[% END %]>
+<body[% IF bodyID %] id="[% bodyID %]"[% END %] onload="prettyPrint()">
     <div class="topbar-wrapper" style="z-index: 5;">
         <div class="topbar" data-dropdown="dropdown">
             <div class="topbar-inner">
