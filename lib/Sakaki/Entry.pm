@@ -134,5 +134,23 @@ sub as_hashref {
 	return +{ map { $_ => $self->$_ } qw(body formatter name) };
 }
 
+sub serialize {
+    my ($self) = @_;
+    return 'formatter: ' . $self->formatter . "\n\n" . $self->body;
+}
+
+sub deserialize {
+    my ($self, $fh) = @_;
+
+    my %ret;
+    while (my $line = <$fh>) {
+        last if $line !~ /\S/;
+        my ($k, $v) = ($line =~ /^([^:]+)\s*:\s*(.+)\r?\n?/);
+        $ret{$k} = $v;
+    }
+    $ret{body} = do { local $/; <$fh> };
+    return %ret;
+}
+
 1;
 

@@ -13,6 +13,7 @@ use URI::Escape qw(uri_escape_utf8 uri_unescape);
 use Encode qw(decode_utf8);
 use Data::Page;
 use Sakaki::Log;
+use File::Path;
 
 use Sakaki::Entry;
 
@@ -26,6 +27,8 @@ has root_dir => (
 
 sub BUILD {
     my $self = shift;
+
+    mkpath($self->root_dir);
 
     unless (-f catfile($self->root_dir, 'IndexPage')) {
         my $entry = Sakaki::Entry->new(
@@ -70,20 +73,13 @@ sub create {
 
         {
             open my $fh, '>:utf8', $filename;
-            print {$fh} $entry->body;
-            close $fh;
-        }
-
-        my $formatfile = ".${filename}.format";
-        {
-            open my $fh, '>:utf8', $formatfile;
-            print {$fh} $entry->formatter;
+            print {$fh} $entry->serialize;
             close $fh;
         }
 
         system('git', 'init');
-        system('git', 'add', $filename, $formatfile);
-        system('git', 'commit', '--author', 'Anonymous Coward <anonymous@example.com>', '-m', 'initial import', $filename, $formatfile);
+        system('git', 'add', $filename);
+        system('git', 'commit', '--author', 'Anonymous Coward <anonymous@example.com>', '-m', 'initial import : ' . $entry->name, $filename);
     }
 }
 
@@ -96,25 +92,14 @@ sub update {
         flock($fh, LOCK_EX);
         my $src = do { local $/, <$fh> };
 
-		my $formatfile = ".@{[ $entry->name_raw ]}.format";
-		my $origfmt = do {
-			open my $fh, '<:utf8', $formatfile;
-			local $/;
-			<$fh>;
-		};
+        my $serialized = $entry->serialize;
 
-        if ($src ne $entry->body || $origfmt ne $entry->formatter) {
-			{
-				open my $fh, '>:utf8', $formatfile;
-				print {$fh} $entry->formatter;
-				close $fh;
-			}
-
+        if ($src ne $serialized) {
             seek($fh, 0, SEEK_SET);
             truncate($fh, 0);
-            print {$fh} $entry->body;
-            system('git', 'add', $entry->name_raw, $formatfile);
-            system('git', 'commit', '--author', 'Anonymous Coward <anonymous@example.com>', '-m', 'modified', $entry->name_raw, $formatfile);
+            print {$fh} $serialized;
+            system('git', 'add', $entry->name_raw);
+            system('git', 'commit', '--author', 'Anonymous Coward <anonymous@example.com>', '-m', 'modified: ' . $entry->name, $entry->name_raw);
         }
         close $fh;
     }
@@ -126,17 +111,27 @@ sub remove {
     {
         my $g = pushd($self->root_dir);
 
-		my $formatfile = ".@{[ $entry->name_raw ]}.format";
-        system('git', 'rm', $entry->name_raw, $formatfile);
-        system('git', 'commit', '--author', 'Anonymous Coward <anonymous@example.com>', '-m', 'remove page', $entry->name_raw, $formatfile);
+        system('git', 'rm', $entry->name_raw);
+        system('git', 'commit', '--author', 'Anonymous Coward <anonymous@example.com>', '-m', 'remove page', $entry->name_raw);
     }
 }
 
 sub lookup {
     my ($self, $name) = @_;
     $name // croak;
+    my $name_raw = uri_escape_utf8($name);
 
-    return Sakaki::Entry->new(name => $name, repository => $self);
+    my %args = do {
+        my $g = pushd($self->root_dir);
+        unless (-f $name_raw) {
+            return undef;
+        }
+        open my $fh, '<:utf8', $name_raw;
+        flock($fh, LOCK_SH);
+        Sakaki::Entry->deserialize($fh);
+    };
+
+    return Sakaki::Entry->new(name => $name, repository => $self, %args);
 }
 
 sub get_log {

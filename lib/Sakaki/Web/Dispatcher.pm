@@ -13,7 +13,14 @@ sub dispatch {
     if ( my $p = $class->router->match( $c->request->env ) ) {
         if (defined(my $name = $p->{name})) {
             $name = decode_utf8(uri_unescape $name);
-            $p->{entry} = $c->repository->lookup($name);
+            my $entry = $c->repository->lookup($name);
+            if ($entry) {
+                $p->{entry} = $entry;
+            } else {
+                my $res = $c->show_error("There is no page named: " . $name);
+                $res->code(404);
+                return $res;
+            }
         }
         return $p->{code}->( $c, $p );
     }

@@ -14,8 +14,9 @@ use lib File::Spec->rel2abs(File::Spec->catdir(dirname(__FILE__), '..', 'lib'));
 use parent qw/Exporter/;
 use Test::More 0.98;
 use File::Path;
+use File::Temp ();
 
-our @EXPORT = qw(slurp);
+our @EXPORT = qw(slurp create_repository);
 
 {
     # utf8 hack.
@@ -46,6 +47,11 @@ use Sakaki;
 
     my $c = Sakaki->new();
     $c->setup_schema();
+}
+
+sub create_repository {
+    my $tmpdir = File::Temp::tempdir();
+    return Sakaki::Repository->new(root_dir => $tmpdir);
 }
 
 1;
