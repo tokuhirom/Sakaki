@@ -42,6 +42,17 @@ This is a top page of Sakaki.
         );
         $self->create($entry);
     }
+    unless (-f catfile($self->root_dir, 'SideBar')) {
+        my $entry = Sakaki::Entry->new(
+            repository => $self,
+            name => 'SideBar',
+            body => <<'...',
+sidebar.
+...
+            formatter => 'Sakaki::Formatter::Xatena',
+        );
+        $self->create($entry);
+    }
 }
 
 sub create {

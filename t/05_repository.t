@@ -20,8 +20,9 @@ subtest 'create' => sub {
 
 subtest 'log' => sub {
     my $entry = $repository->lookup('test');
-    my $log = $entry->get_log();
-    like($log, qr(initial));
+    my @log = $entry->get_log();
+    is(0+@log, 1);
+    like($log[0]->subject, qr(initial));
 };
 
 subtest 'recent' => sub {
