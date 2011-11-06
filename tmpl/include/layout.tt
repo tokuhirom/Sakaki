@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0"]]>
     <meta name="format-detection" content="telephone=no" />
         <script src="[% uri_for('/static/js/jquery-1.6.4.min.js') %]"></script>
+        <link rel="stylesheet/less" type="text/css" href="[% static_file('/static/bootstrap/lib/bootstrap.less') %]">
+        <script src="[% uri_for('/static/js/less-1.1.4.min.js') %]"></script>
     <link href="[% uri_for('/static/bootstrap/bootstrap.min.css') %]" rel="stylesheet" type="text/css" />
     <script src="[% uri_for('/static/bootstrap/bootstrap-dropdown.js') %]"></script>
 
