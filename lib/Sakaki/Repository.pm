@@ -164,7 +164,6 @@ sub get_log_detail {
 	# %at unix time
 	# %s subject
 	my $pretty = join('xyZZy', qw(%H %an %at %s));
-	# TODO: paginate
     my $log_raw = `git log --pretty="$pretty" -p -1 --no-color '$hash' @{[ $entry->name_raw ]}`;
     my @lines = split /\n/, $log_raw;
     my $log = do {
