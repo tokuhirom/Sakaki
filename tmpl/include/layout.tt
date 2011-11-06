@@ -37,12 +37,12 @@
             </div><!-- /topbar-inner -->
         </div><!-- /topbar -->
     </div>
-    <div class="container-fluid">
-        <div class="sidebar">
-            [% c().sidebar.html %]
-        </div>
-        <div class="content">
-            <div id="main">
+    <div class="container">
+        <div class="row">
+            <div class="span4">
+                [% c().sidebar.html %]
+            </div>
+            <div class="span10">
                 [% content %]
             </div>
         </div>

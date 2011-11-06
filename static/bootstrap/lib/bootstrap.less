@@ -24,3 +24,51 @@
 @import "forms.less";
 @import "tables.less";
 @import "patterns.less";
+
+a {
+    color: #42826C;
+}
+a:hover, a:visited {
+    color: #42826C;
+}
+
+html,body {
+    background-color: white;
+}
+
+.container-fluid {
+    height: 100%;
+    margin-bottom: 30px;
+    width: 960px;
+}
+.content, .sidebar {
+    .clearfix;
+    background-color: white;
+    padding: 8px;
+    height: 100%;
+}
+.sidebar {
+    border-right: #A5C77F 3px solid;
+}
+
+body .topbar-inner,
+body .topbar .fill {
+  background-color: #002F32;
+  #gradient > .vertical(#002F32, #002F32);
+  @shadow: 0 1px 3px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1);
+  .box-shadow(@shadow);
+}
+
+footer {
+    background-color: #A5C77F;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: white;
+    a {
+        color: white;
+    }
+    a:visited {
+        color: white;
+    }
+    font-size: 80%;
+}
