@@ -35,4 +35,16 @@ sub setup_schema {
     }
 }
 
+use Cache::FileCache;
+sub cache {
+    my $self = shift;
+    $self->{cache} //= Cache::FileCache->new(
+        {
+            namespace          => 'sakaki',
+            default_expires_in => 600,
+            auto_purge_on_set  => 1
+        }
+    );
+}
+
 1;

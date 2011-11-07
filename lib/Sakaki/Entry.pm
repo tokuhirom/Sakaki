@@ -12,6 +12,7 @@ use Smart::Args;
 use File::pushd;
 use Sakaki::Formatter;
 use Sakaki::StripScripts;
+use Log::Minimal;
 
 use Sakaki;
 use Sakaki::Repository;
@@ -120,13 +121,22 @@ sub format {
 sub html {
 	my $self = shift;
 
-	my $formatter = $self->formatter;
+    $self->{html} //= sub {
+        my $c = Sakaki->context;
+        my $cache_key = $self->name_raw . "\0html";
+        my $e = $c->cache->get($cache_key);
+        if (!$e || $e->[0] ne $self->mtime) {
+            infof("Cache missed. rendering %s", $self->name);
+            my $formatter = $self->formatter;
 
-    my $html = $formatter->format($self->body);
-       $html = Sakaki::StripScripts->strip($html);
-       $html = mark_raw($html);
-
-	return $html;
+            my $html = $formatter->format($self->body);
+            $html = Sakaki::StripScripts->strip($html);
+            $html = mark_raw($html);
+            $e = [$self->mtime, $html];
+            $c->cache->set( $cache_key, $e, 24*60*60 );
+        }
+        return $e->[1];
+    }->();
 }
 
 sub as_hashref {
