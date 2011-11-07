@@ -162,5 +162,10 @@ sub deserialize {
     return %ret;
 }
 
+sub path {
+    my ($self) = @_;
+    return $self->name eq 'IndexPage' ? '/' : '/e/' . $self->name_raw;
+}
+
 1;
 

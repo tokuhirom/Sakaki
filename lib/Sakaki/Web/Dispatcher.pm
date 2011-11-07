@@ -85,7 +85,7 @@ any '/e/:name/edit' => sub {
         $entry->body(scalar $c->req->param('body'));
         $entry->formatter(scalar $c->req->param('formatter'));
         $entry->update();
-        return $c->redirect( "/e/" . uri_escape_utf8 $entry->name);
+        return $c->redirect( $entry->path );
     }
 	$c->fillin_form( $entry->as_hashref );
     my $formatters =
@@ -122,7 +122,7 @@ any '/create' => sub {
                 'This entry is already exists: ' . $entry->name );
         }
         $entry->create();
-        return $c->redirect( "/e/" . $entry->name_raw );
+        return $c->redirect( $entry->path );
     }
 
     my $formatters =
