@@ -1,0 +1,32 @@
+[% WRAPPER 'include/layout.tt' WITH subtitle='Attachments: ' _ entry.name %]
+
+<div class="row">
+    <div class="span16">
+		<div>
+			<a href="/e/[% entry.name | uri %]/edit">Edit</a>
+			|
+			<a href="/e/[% entry.name | uri %]/log">Log</a>
+			|
+			<a href="/e/[% entry.name | uri %]/remove">Remove</a>
+            |
+			<a href="/e/[% entry.name | uri %]">Show</a>
+		</div>
+		<h2>[% entry.name %]'s attachments</h2>
+
+		<form method="post" enctype="multipart/form-data" action="./add">
+			<input type="file" name="file" />
+			<input type="submit" value="Upload" class="btn primary" />
+		</form>
+
+		<table>
+		[% FOR v IN entry.list_attachments() %]
+			<tr>
+			<td><a href="[% uri_for('/e/' _ entry.name_raw _ '/attachments/download', {f => v.name}) %]">[% v.name %]</a></td>
+			<td>[% v.mtime_piece.strftime('%Y-%m-%d(%a) %T') %]</td>
+			</tr>
+		[% END %]
+		</table>
+    </div>
+</div>
+
+[% END %]

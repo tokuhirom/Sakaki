@@ -14,6 +14,7 @@ use Encode qw(decode_utf8);
 use Data::Page;
 use Sakaki::Log;
 use File::Path;
+use File::Basename ();
 
 use Sakaki::Entry;
 
@@ -230,6 +231,135 @@ sub search {
 
     return ([$pager->splice(\@files)], $pager);
 }
+
+sub _attachment_filename {
+    my ( $self, $entry, $filename ) = @_;
+    $filename // die;
+
+    Sakaki::Exception::ValidationError->throw("Security issue : $filename")
+      if $filename =~ /\.\.|^\./;
+
+    return File::Spec->catfile( $self->_attachment_directory($entry),
+        uri_escape_utf8( File::Basename::basename($filename) ) );
+}
+
+
+sub _attachment_directory {
+    my ( $self, $entry ) = @_;
+    $entry // die;
+    my $dir = File::Spec->catfile( '_attachments', $entry->name_raw );
+	mkpath($dir);
+	return $dir;
+}
+
+sub add_attachment {
+    my ( $self, $entry, $filename, $ifh ) = @_;
+    $ifh // die;
+
+    {
+        my $g = pushd( $self->root_dir );
+
+		my $fname = $self->_attachment_filename( $entry, $filename );
+
+		infof( "Writing attachment: %s", $fname );
+		open my $ofh, '>', $fname;
+		flock( $ofh, LOCK_EX );
+		while (1) {
+			my $read = read( $ifh, my $buf, 1024 );
+			die "Error while reading attachment $fname: $!" if !defined $read;
+			last if $read == 0;
+			print {$ofh} $buf;
+		}
+
+        system( "git", 'add', $fname );
+        system(
+            'git',
+            'commit',
+            '--author',
+            'Anonymous Coward <anonymous@example.com>',
+            '-m',
+            "Added attachment: " . $entry->name . ' : ' . $filename,
+            $fname
+        );
+
+		close $ofh;
+    }
+
+    return;
+}
+
+sub open_attachment {
+    my ( $self, $entry, $filename ) = @_;
+	$filename // die;
+
+	{
+		my $g = pushd($self->root_dir);
+		my $fname = $self->_attachment_filename( $entry, $filename );
+
+		open my $ifh, '<', $fname;
+		flock( $ifh, LOCK_SH );
+		return $ifh;
+	}
+}
+
+sub remove_attachment {
+    my ( $self, $entry, $filename ) = @_;
+	$filename // die;
+
+    {
+        my $g = pushd( $self->root_dir );
+		my $fname = $self->_attachment_filename( $entry, $filename );
+        system( "git", 'rm', $fname );
+        system(
+            'git',
+            'commit',
+            '--author',
+            'Anonymous Coward <anonymous@example.com>',
+            '-m',
+            "Remove attachment: " . $entry->name . ' : ' . $filename,
+            File::Spec->catfile(File::Spec->no_upwards(File::Spec->abs2rel($fname)))
+        );
+    }
+}
+
+sub list_attachments {
+    my ( $self, $entry ) = @_;
+
+	my $g = pushd( $self->root_dir );
+
+    my $dir = $self->_attachment_directory($entry);
+
+    opendir(my $dh, $dir);
+	my @files;
+    while ( defined( my $f = readdir($dh) ) ) {
+        next if $f =~ /^\./;
+        my $path = catfile( $dir, $f );
+        next unless -f $path;
+        push @files,
+          Sakaki::Attachment->new(
+            repository => $self,
+            entry      => $entry,
+            name       => decode_utf8( uri_unescape($f) ),
+            fullpath   => File::Spec->rel2abs($path),
+          );
+    }
+    @files = reverse sort { $a->mtime <=> $b->mtime } @files;
+	return wantarray ? @files : \@files;
+}
+
+sub get_attachment {
+	my ($self, $entry, $filename) = @_;
+	$filename // die;
+
+	my $path = File::Spec->catfile($self->root_dir, $self->_attachment_filename( $entry, $filename ));
+	return Sakaki::Attachment->new(
+		repository => $self,
+		entry      => $entry,
+		name       => decode_utf8( uri_unescape($filename) ),
+		fullpath   => $path,
+	);
+}
+
 
 1;
 

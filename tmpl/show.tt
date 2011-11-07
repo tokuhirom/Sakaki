@@ -8,9 +8,22 @@
 			<a href="/e/[% entry.name | uri %]/log">Log</a>
 			|
 			<a href="/e/[% entry.name | uri %]/remove">Remove</a>
+            |
+			<a href="/e/[% entry.name | uri %]/attachments/">Attachments</a>
 		</div>
-		<h2>[% entry.name %]</h2>
-		[% entry.html %]
+        <section class="entry">
+            <h2>[% entry.name %]</h2>
+            [% entry.html %]
+            <div class="attachments">
+                <ul>
+            [% FOR v IN entry.list_attachments() %]
+                <li>
+                    <a href="[% uri_for('/e/' _ entry.name_raw _ '/attachments/download', {f => v.name}) %]">[% v.name %]</a>
+                </li>
+            [% END %]
+                </ul>
+            </div>
+        </section>
     </div>
 </div>
 

@@ -6,6 +6,7 @@ use Test::More;
 use Sakaki::Repository;
 use Sakaki::Entry;
 use File::Temp qw(tempdir);
+use autodie;
 
 my $tmpdir = tempdir(CLEANUP => 1);
 
@@ -81,6 +82,43 @@ subtest 'remove' => sub {
     ok(-f $entry->fullpath);
     $entry->remove();
     ok(!-f $entry->fullpath);
+};
+
+subtest 'attachments' => sub {
+    my $entry = Sakaki::Entry->new(
+        name => 'T2',
+        body => 'OK2',
+        repository => $repository,
+        formatter => 'Sakaki::Formatter::HTML',
+    );
+    $entry->create();
+    {
+        note 'add';
+        open my $fh, '<', 'tmpl/show.tt';
+        $entry->add_attachment('show.tt', $fh);
+    }
+    {
+        note 'open';
+        my $a = $entry->get_attachment('show.tt');
+        my $fh = $a->openr;
+        my $src = do { local $/; <$fh> };
+        like($src, qr{include/layout.tt});
+        is($a->mime_type, "application/octet-stream");
+        is(-s $a->fullpath, -s 'tmpl/show.tt');
+    }
+    {
+        note 'list';
+        my @attachments = $entry->list_attachments();
+        is(0+@attachments, 1);
+        is($attachments[0]->name, 'show.tt');
+        ok(-f $attachments[0]->fullpath);
+    }
+    {
+        note 'remove';
+        $entry->get_attachment('show.tt')->remove();
+        my @attachments = $entry->list_attachments();
+        is(0+@attachments, 0, 'removed');
+    }
 };
 
 done_testing;

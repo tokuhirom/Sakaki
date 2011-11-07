@@ -63,6 +63,7 @@ get '/search' => sub {
 get '/e/:name' => sub {
     my ( $c, $args ) = @_;
     my $entry = $args->{entry} // die;
+	$entry->html(); # pre-rendering
     return $c->render( 'show.tt', { entry => $entry } );
 };
 get '/e/:name/log' => sub {
@@ -102,6 +103,38 @@ any '/e/:name/remove' => sub {
         return $c->redirect( "/" );
     }
     return $c->render( 'remove.tt', { entry => $entry } );
+};
+
+any '/e/:name/attachments/' => sub {
+    my ($c, $args) = @_;
+
+    my $entry = $args->{entry} // die;
+	return $c->render( 'attachments/list.tt', { entry => $entry } );
+};
+post '/e/:name/attachments/add' => sub {
+    my ($c, $args) = @_;
+
+    my $entry = $args->{entry} // die;
+    my $upload = $c->req->upload('file')
+      // return $c->show_error("Please choose a upload file");
+	open my $fh, '<', $upload->path;
+	$entry->add_attachment($upload->basename, $fh);
+	return $c->redirect('/e/' . $entry->name_raw . '/attachments/');
+};
+get '/e/:name/attachments/download' => sub {
+    my ($c, $args) = @_;
+
+    my $entry = $args->{entry} // die;
+	my $f = $c->req->param('f') // die;
+	my $attachment = $entry->get_attachment($f) // return $c->res_404();
+    return $c->create_response(
+        200,
+        [
+            'Content-Type'   => $attachment->mime_type,
+            'Content-Length' => -s $attachment->fullpath
+        ],
+        $attachment->openr,
+    );
 };
 
 any '/create' => sub {

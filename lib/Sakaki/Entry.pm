@@ -17,6 +17,7 @@ use Log::Minimal;
 use Sakaki;
 use Sakaki::Repository;
 use Sakaki::Util qw(slurp);
+use Sakaki::Attachment;
 
 use Mouse;
 
@@ -82,7 +83,7 @@ has repository => (
     isa      => 'Sakaki::Repository',
     required => 1,
 );
-for my $meth (qw(create update get_log get_log_detail remove)) {
+for my $meth (qw(create update get_log get_log_detail remove list_attachments add_attachment get_attachment)) {
     no strict 'refs';
     *{__PACKAGE__ . '::' . $meth} = sub {
         my ($self) = @_;
