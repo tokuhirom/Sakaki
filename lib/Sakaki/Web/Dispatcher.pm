@@ -117,6 +117,11 @@ post '/e/:name/attachments/add' => sub {
     my $entry = $args->{entry} // die;
     my $upload = $c->req->upload('file')
       // return $c->show_error("Please choose a upload file");
+
+	if ($upload->size > 10_000_000) {
+		return $c->show_error("Uploaded file too big");
+	}
+
 	open my $fh, '<', $upload->path;
 	$entry->add_attachment($upload->basename, $fh);
 	return $c->redirect('/e/' . $entry->name_raw . '/attachments/');
