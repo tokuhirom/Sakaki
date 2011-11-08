@@ -27,7 +27,7 @@ has name => (
     required => 1,
     trigger => sub {
         my ($self, $name) = @_;
-        if ($name =~ /\.\.|\0/ || $name =~ /\.format$/) {
+        if ($name =~ /\.\.|\0|^[._]/ || $name =~ /\.format$/) {
             die Sakaki::Exception::ValidationError->new( reason =>
                 "You cannot contain some chars in the entry name for security reason."
             );
