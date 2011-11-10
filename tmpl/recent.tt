@@ -6,7 +6,7 @@
 		<ul>
 		[% FOR v IN entries %]
 			<li>
-				<a href="[% uri_for('/e/' _ uri(v.name)) %]">[% v.name %]</a>
+				<a href="[% uri_for(uri(v.name)) %]">[% v.name %]</a>
 				[% v.mtime_piece.strftime('%Y-%m-%d(%a) %T') %]
 			</li>
 		[% END %]

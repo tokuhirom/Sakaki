@@ -3,14 +3,14 @@
 <div class="row">
     <div class="span16">
 		<div>
-			<a href="/e/[% entry.name | uri %]/edit">Edit</a>
+			<a href="[% uri_with({mode => 'edit'}) %]">Edit</a>
 			|
-			<a href="/e/[% entry.name | uri %]">Show</a>
+			<a href="[% uri_with({mode => 'show'}) %]">Show</a>
 		</div>
 		<h2>[% entry.name %]</h2>
         [% FOR v IN logs %]
             <section class="log">
-                <div class="hash"><a href="[% uri_for('/e/' _ uri(entry.name) _ '/log/' _ v.hash) %]">[% v.hash %]</a></div>
+                <div class="hash"><a href="[% uri_with({mode => 'log_detail', hash => v.hash}) %]">[% v.hash %]</a></div>
                 <div class="author">[% v.author_name %]</div>
                 <div class="date">[% v.author_time_piece.strftime('%Y-%m-%d(%a) %H:%M') %]</div>
             </section>

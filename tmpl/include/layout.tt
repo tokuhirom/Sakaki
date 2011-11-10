@@ -28,10 +28,10 @@
                 <div class="container">
                 <h3><a href="/">Sakaki</a></h3>
                 <ul class="nav">
-                    <li><a href="/create">Create</a></li>
-                    <li><a href="/recent">Recent</a></li>
+                    <li><a href="/_create">Create</a></li>
+                    <li><a href="/_recent">Recent</a></li>
                 </ul>
-                <form class="pull-left" action="/search">
+                <form class="pull-left" action="/_search">
                     <input type="text" placeholder="Search" name="keyword" >
                 </form>
                 </div>

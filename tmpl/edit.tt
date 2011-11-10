@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="span16">
-		<form method="post" action="[% uri_for('/e/' _ uri(entry.name) _ '/edit') %]">
+		<form method="post" action="[% uri_with({mode => 'edit'}) %]">
             <fieldset>
                 <legend>Edit &#39;[% entry.name %]&#39;</legend>
                 <input type="hidden" name="name" value="[% entry.name %]" />

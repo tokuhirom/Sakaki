@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="span16">
-		<form method="post" action="[% uri_for('/create') %]">
+		<form method="post" action="[% uri_for('/_create') %]">
             <fieldset>
             <legend>Create new page</legend>
             <div class="clearfix">

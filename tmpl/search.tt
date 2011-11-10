@@ -7,14 +7,14 @@
     [% ELSE %]
         <h1>Search page</h1>
     [% END %]
-        <form method="get" action="[% uri_for('/search') %]">
+        <form method="get" action="[% uri_for('/_search') %]">
             <input type="text" name="keyword" />
             <input type="submit" value="Search" class="btn" />
         </form>
 		<ul>
 		[% FOR v IN entries %]
 			<li>
-				<a href="[% uri_for('/e/' _ uri(v.name)) %]">[% v.name %]</a>
+				<a href="[% uri_for(uri(v.name)) %]">[% v.name %]</a>
 				[% v.mtime_piece.strftime('%Y-%m-%d(%a) %T') %]
 			</li>
 		[% END %]
