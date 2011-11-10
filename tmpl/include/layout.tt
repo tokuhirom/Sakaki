@@ -49,6 +49,7 @@
         </div>
     </div>
     <footer class="footer">
+        Sakaki [% sakaki_version() %],
         Powered by <a href="http://amon.64p.org/">Amon2</a>
     </footer>
 </body>

@@ -47,6 +47,7 @@ use Text::Xslate;
                     return $c->uri_for($fname, { 't' => $static_file_cache{$fname} || 0 });
                 }
             },
+            sakaki_version => sub { $Sakaki::VERSION },
         },
         %$view_conf
     });
