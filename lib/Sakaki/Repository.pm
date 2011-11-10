@@ -233,22 +233,21 @@ sub search {
 }
 
 sub _attachment_filename {
-    my ( $self, $entry, $filename ) = @_;
+    my ( $self, $entry, $filename, $mkpath ) = @_;
     $filename // die;
 
     Sakaki::Exception::ValidationError->throw("Security issue : $filename")
       if $filename =~ /\.\.|^\./;
 
-    return File::Spec->catfile( $self->_attachment_directory($entry),
+    return File::Spec->catfile( $self->_attachment_directory($entry, $mkpath),
         uri_escape_utf8( File::Basename::basename($filename) ) );
 }
 
 
 sub _attachment_directory {
-    my ( $self, $entry ) = @_;
+    my ( $self, $entry, $mkpath ) = @_;
     $entry // die;
     my $dir = File::Spec->catfile( '_attachments', $entry->name_raw );
-	mkpath($dir);
 	return $dir;
 }
 
@@ -260,8 +259,9 @@ sub add_attachment {
         my $g = pushd( $self->root_dir );
 
 		my $fname = $self->_attachment_filename( $entry, $filename );
+        mkpath(File::Basename::dirname($fname));
 
-		infof( "Writing attachment: %s", $fname );
+		infof( "Writing attachment: %s", File::Spec->rel2abs($fname) );
 		open my $ofh, '>', $fname;
 		flock( $ofh, LOCK_EX );
 		while (1) {
