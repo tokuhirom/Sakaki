@@ -18,7 +18,7 @@ is(normalize(Sakaki::Formatter::Xatena->format(<<'...')), normalize(<<',,,'));
 use strict;
 ||<
 ...
-<pre class="code prettyprint lang-perl">use strict;</pre>
+<pre class="prettyprint code lang-perl">use strict;</pre>
 ,,,
 
 done_testing;
