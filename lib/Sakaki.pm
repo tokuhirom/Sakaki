@@ -38,13 +38,18 @@ sub setup_schema {
 use Cache::FileCache;
 sub cache {
     my $self = shift;
-    $self->{cache} //= Cache::FileCache->new(
-        {
-            namespace          => 'sakaki',
-            default_expires_in => 600,
-            auto_purge_on_set  => 1
-        }
-    );
+    $self->{cache} //= do {
+        my $config = $self->config->{'Cache::FileCache'} || +{};
+        my $cache = Cache::FileCache->new(
+            {
+                namespace          => 'sakaki',
+                default_expires_in => 600,
+                auto_purge_on_set  => 1
+            }
+        );
+        $cache->set_cache_root($config->{cache_root}) if $config->{cache_root};
+        $cache;
+    };
 }
 
 1;

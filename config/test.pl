@@ -18,4 +18,7 @@ if ( -d '/home/dotcloud/') {
         }
     ],
     root_dir => tempdir(CLEANUP => 1),
+    'Cache::FileCache' => {
+        cache_root => tempdir(CLEANUP => 1),
+    },
 };
