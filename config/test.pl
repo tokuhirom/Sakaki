@@ -17,5 +17,5 @@ if ( -d '/home/dotcloud/') {
             sqlite_unicode => 1,
         }
     ],
-    root_dir => tempdir(),
+    root_dir => tempdir(CLEANUP => 1),
 };

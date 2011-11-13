@@ -50,7 +50,7 @@ use Sakaki;
 }
 
 sub create_repository {
-    my $tmpdir = File::Temp::tempdir();
+    my $tmpdir = File::Temp::tempdir(CLEANUP => 1);
     return Sakaki::Repository->new(root_dir => $tmpdir);
 }
 
